@@ -275,7 +275,7 @@ if __name__ == "__main__":
     result_dir = args.result_dir
     if not os.path.isdir(result_dir):
         os.makedirs(result_dir)
-    filename = f"{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-bs{args.micro_batch}-seq{args.seq_length}"
+    filename = f"{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-bs{args.micro_batch}-seq{args.seq_length}-MoE-{f'{args.num_experts}-topk{args.moe_router_topk}' if args.moe_enable else False}"
     
     if args.aiob_enable:
         if "Qwen3-Moe" in model_name:
@@ -292,7 +292,7 @@ if __name__ == "__main__":
 
     else:
         aiob_dir = "results/aiob_outputs"
-        aiob_output_filename = f"{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-bpg{args.micro_batch}-seq{args.seq_length}.txt"
+        aiob_output_filename = f"{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-bpg{args.micro_batch}-seq{args.seq_length}-MoE-{f'{args.num_experts}-topk{args.moe_router_topk}' if args.moe_enable else False}.txt"
         aiob_output_filepath = os.path.join(aiob_dir,aiob_output_filename)
         if not os.path.exists(aiob_output_filepath):
             print(f"aiob not enabled, and {aiob_output_filepath} not found. Using default compute time.")
