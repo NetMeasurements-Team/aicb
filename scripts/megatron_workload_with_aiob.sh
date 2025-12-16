@@ -28,9 +28,9 @@ gpu_type=None
 usage() {
   echo "Usage: \$0 [options]
     options:
-      --frame              communication framework, defaults to $frame
+      --frame                   communication framework, defaults to $frame
       --world_size              world size, defaults to $world_size
-      --tensor_model_parallel_size                  tensor parallelism size, defaults to $tensor_model_parallel_size
+      --tensor_model_parallel_size               tensor parallelism size, defaults to $tensor_model_parallel_size
       --pipeline_model_parallel                  pipeline parallelism size, defaults to $pipeline_model_parallel
       --global_batch            global batch size, defaults to $global_batch
       --micro_batch             micro batch size, defaults to $micro_batch
@@ -38,7 +38,7 @@ usage() {
       --seq_length              sequence length, defaults to $seq_length
       --hidden_size             hidden size, defaults to $hidden_size
       --epoch_num               number of epochs, defaults to $epoch_num
-      --use_distributed_optimizer use distributed optimizer
+      --use_distributed_optimizer      use distributed optimizer
       --num_attention_heads     number of attention heads, defaults to $num_attention_heads
       --aiob_enable             enable AIOB
       --use_flash_attn          use flash attention
@@ -47,11 +47,12 @@ usage() {
       --comp_filepath           computation file path
       --max_position_embeddings max position embeddings, defaults to $max_position_embeddings
       -m, --model_size          model size, defaults to $model_size (possible values: 175, 22, 13, 7, moe, deepseek671, deepseek236, deepseek16)
-      --moe_enable             enable moe
+      --moe_enable              enable moe
       --moe_router_topk         Number of experts to route to for each token.
       --expert_model_parallel_size     Degree of expert model parallelism
-      --num_experts          Number of experts in the MoE model.  
+      --num_experts             Number of experts in the MoE model.
       --moe_grouped_gemm        apply grouped gemm
+      --vocab_size              vocabulary size
       -h, --help                display this help and exit" 1>&2; exit 1;
 }
 
@@ -112,6 +113,8 @@ do
       grouped_gemm=--moe_grouped_gemm;;
     --recompute_activations|--recompute)
       recompute_activations=--recompute_activations;;
+    --vocab_size|--vocab)
+      vocab_size=$2; shift;;
     -h|--help)
       usage;;
     (*)
