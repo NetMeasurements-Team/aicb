@@ -171,7 +171,7 @@ case $model_size in
     frame=DeepSeek
     moe_enable=--moe_enable
     num_layers=61
-    hidden_size=18432
+    hidden_size=7168moe_enable
     num_attention_heads=128
     ffn_hidden_size=2048
     q_lora_rank=1536
