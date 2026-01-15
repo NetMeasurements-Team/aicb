@@ -302,10 +302,8 @@ if __name__ == "__main__":
     for key, value in compute_cache.items():
         print(f"    '{key}' : {value},")
     print("}")
-    
-    work = SimAIWorkload(
-        model, args,compute_cache
-    )
+
+    work = SimAIWorkload(model, args, compute_cache)
     name_layers = work.workload_generate_aiob()
     # set comm_size = 0 for any comm_type == NONE
     for i in range(len(work.workload)):

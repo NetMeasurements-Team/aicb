@@ -598,6 +598,7 @@ class SIMAI_workload:
         #                         ))
         forward_compute_time = default_compute_time
         backward_compute_time = default_compute_time
+        # FIXME why is this different than aiob? (there is no grad_param_compute, there is a forward, and no -moe_param_count)
         self.workload.append(
             Work_Item(
                 name="grad_norm",
@@ -935,10 +936,13 @@ class simAI_MicroTest:
 if __name__ == "__main__":
     args = get_params()
     print(args)
+    model: MockedModel
     if args.frame == "DeepSeek":
         model = DeepSeekV3Model(args)
     else:
         model = MegatronModel(args)
+    if args.verbose:
+        model.print_layers()
     result_dir = "results/workload/"
     if not os.path.isdir(result_dir):
         os.makedirs(result_dir)
@@ -961,13 +965,12 @@ if __name__ == "__main__":
             comp_filepath = args.comp_filepath
             compute_cache = extract_averages(comp_filepath,args)
 
-        # print("compute_cache = {")
-        # for key, value in compute_cache.items():
-        #     print(f"    '{key}' : {value},")
-        # print("}")
-        work = SIMAI_workload(
-            model, args,compute_cache
-        )
+        if args.verbose:
+            print("compute_cache = {")
+            for key, value in compute_cache.items():
+                print(f"    '{key}' : {value},")
+            print("}")
+        work = SIMAI_workload(model, args, compute_cache)
         name_layers = work.workload_generate_aiob()
 
         # set comm_size = 0 for any comm_type == NONE
@@ -978,11 +981,11 @@ if __name__ == "__main__":
                 work.workload[i].backward_comm_size = 0
 
         work.dump_file(filepath)
-        print(f"workload save in : {filepath}.txt")
+        print(f"workload saved at: {filepath}.txt")
     # print(args)
     else:
 
         work = SIMAI_workload(model, args, None)
         name_layers = work.workload_generate()
         work.dump_file(filepath)
-        print(f"workload save in : {filepath}.txt")
+        print(f"workload saved at: {filepath}.txt")

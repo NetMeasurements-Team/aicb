@@ -283,7 +283,7 @@ def get_comp_out(args):
         filepath = measure_model(masked_input)
         return filepath
 
-    
+
 
 def extract_inference_averages(file_path,args):
     attention_norm_avg_sum = 0.0
@@ -636,6 +636,7 @@ def get_params():
         help="Enable visualization",
     )
     parser.add_argument("--workload_only", action="store_true", help="Only generate workload")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     get_model_params(parser)
     get_ds_params(parser)
     get_megatron_params(parser)
@@ -659,11 +660,11 @@ def get_params():
     args.num_microbatches = args.global_batch // (args.dp_num * args.micro_batch)
     if args.aiob_enable and not args.computation_enable:
             args.computation_enable = True
-            
+
     if args.num_attention_heads is None:
         args.num_attention_heads = args.num_layers
 
-                    
+
     args.padded_vocab_size = get_padded_vocab_size(args)
     if args.ffn_hidden_size is None:
         if args.swiglu:
@@ -736,7 +737,7 @@ def get_model_params(parser: argparse.ArgumentParser):
     )
     parser.add_argument("--num_layers", type=int, help='Number of transformer layers.', default=24)
     parser.add_argument(
-        "--seq_length", type=int, help='Maximum sequence length to process.', default=2048
+        "--seq_length", type=int, help='Maximum (global) sequence length to process.', default=2048
     )
     parser.add_argument("--num_attention_heads", help='Number of transformer attention heads.',type=int, default=None)
     parser.add_argument("--vocab_size", type=int, help='Size of vocab before EOD or padding.', default=32000)

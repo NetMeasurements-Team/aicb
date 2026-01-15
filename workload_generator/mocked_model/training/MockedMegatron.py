@@ -12,7 +12,7 @@ limitations under the License.
 """
 
 from utils.utils import divide, CommType, CommGroup
-from workload_generator.mocked_model.MockedModel import MockedModel, Linear, MockedParam
+from workload_generator.mocked_model.MockedModel import MockedModel, MockedParam
 from log_analyzer.log import Workload, LogItem
 
 
@@ -48,7 +48,7 @@ class MegatronRowLinear(MockedModel):
     
     def activation_memory(self):
         # ctx.save_for_backward(input, weight)
-        return self.seq_len * self.input_size
+        return self.seq_len * self.input_size_per_partition
 
     def forward(self):
         workloads = Workload()
@@ -164,7 +164,10 @@ class MegatronColumnLinear(MockedModel):
     
     def activation_memory(self):
         # ctx.save_for_backward(input, weight)
-        return self.seq_len * self.input_size
+        if self.sequence_parallel_enabled:
+            return (self.seq_len // self.tensor_model_parallel_size) * self.input_size
+        else:
+            return self.seq_len * self.input_size
 
     def forward(self):
         workloads = Workload()
@@ -583,7 +586,6 @@ class MegatronEmbedding(MockedModel):
             (4 * num_embedding_per_partition, hidden_size), name=self.name
         )
         self.tensor_model_parallel_size = tp
-        # TODO : position embedding shape is max_sequence_length not sequence_length
         self.position_embedding = MockedParam((seq_len, hidden_size))
         self.comm_size = 2 * batch_size * seq_len * hidden_size
 

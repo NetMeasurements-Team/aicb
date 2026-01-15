@@ -106,6 +106,9 @@ class MockedModel:
     def register_backward_post_hook(self, fn):
         self._post_backward_hook.append(fn)
 
+    def print_layers(self):
+        pass
+
 
 class Linear(MockedModel):  # alias for LlamaRMSNorm, Embedding, LlamaRotaryEmbedding
     def __init__(self, in_feature, out_feature):
