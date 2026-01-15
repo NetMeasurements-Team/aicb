@@ -60,7 +60,6 @@ def _unpack_params(value: object) -> List[MockedParam]:
 def _child_modules(value: object) -> List["MockedModel"]:
     if isinstance(value, MockedModel):
         modules = [value]
-        modules.extend(_child_modules(value.__dict__))
         return modules
     elif isinstance(value, dict):
         modules = []
@@ -85,6 +84,12 @@ class MockedModel:
 
     def parameters(self) -> List[MockedParam]:
         return _unpack_params(self.__dict__)
+
+    def tot_parameters(self) -> int:
+        return sum(p.numel() for p in self.parameters())
+
+    def activation_memory(self) -> int:
+        return sum([c.activation_memory() for c in self.child_modules()])
 
     def child_modules(self) -> List["MockedModel"]:
         return _child_modules(self.__dict__)

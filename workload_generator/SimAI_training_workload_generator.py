@@ -944,15 +944,14 @@ if __name__ == "__main__":
         os.makedirs(result_dir)
     filename = f"{args.gpu_type}-{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-gbs{args.global_batch}-mbs{args.micro_batch}-seq{args.seq_length}-MoE-{f'{args.num_experts}-topk{args.moe_router_topk}' if args.moe_enable else False}-GEMM-{args.moe_grouped_gemm}-flash_attn-{args.use_flash_attn}"
     filepath = os.path.join(result_dir, filename)
-    params = model.parameters()
     # work = SIMAI_workload(model, args, GPU_Tensor_core.A100, "gpt13B")
     # name_layers = work.workload_generate()
     # work.dump_file("test")
-    print(sum(p.numel() for p in params))
+    print(f"local parameters: {model.tot_parameters()}")
+    print(f"local activation: {model.activation_memory()} bytes")
     if args.aiob_enable:
-        params = model.parameters()
-        args.model_param = sum(p.numel() for p in params)
-        if args.comp_filepath == None:
+        args.model_param = model.tot_parameters()
+        if args.comp_filepath is None:
 
             comp_filepath = get_comp_out(args)
 
@@ -962,10 +961,10 @@ if __name__ == "__main__":
             comp_filepath = args.comp_filepath
             compute_cache = extract_averages(comp_filepath,args)
 
-        print("compute_cache = {")
-        for key, value in compute_cache.items():
-            print(f"    '{key}' : {value},")
-        print("}")
+        # print("compute_cache = {")
+        # for key, value in compute_cache.items():
+        #     print(f"    '{key}' : {value},")
+        # print("}")
         work = SIMAI_workload(
             model, args,compute_cache
         )

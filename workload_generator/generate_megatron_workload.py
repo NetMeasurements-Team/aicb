@@ -443,13 +443,10 @@ if __name__ == "__main__":
     filename = f"{workload_generator.name}_{args.model_name}_sp_{args.enable_sequence_parallel}_iteration_{args.epoch_num}_computationEnable_{args.computation_enable}_{args.world_size}n.csv"
     workload.dump(filename)
     params = model.parameters()
-    args.model_param = sum(p.numel() for p in params)
-    args.activation_memory = 0
-    for sub_module in model.child_modules():
-        if hasattr(sub_module, "activation_memory"):
-            args.activation_memory += sub_module.activation_memory()
+    args.model_param = model.tot_parameters()
+    args.activation_memory = model.activation_memory()
     print(f"model_param: {num_parameters_to_bytes(args, args.model_param)}")
-    print(f"activation_memory: {num_parameters_to_bytes(args, args.activation_memory)}")
+    print(f"activation_memory: {num_parameters_to_bytes(args, args.activation_memory)} bytes")
     if args.enable_visual:
             try:
                 from visualize.generate import visualize_output

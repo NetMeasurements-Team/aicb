@@ -85,8 +85,7 @@ class SimAIWorkload():
             if id(model) in visited:
                 return
             visited.add(id(model))
-            if (
-                    isinstance(model, MockedDeepSeek.DeepSeekAttention)
+            if (isinstance(model, MockedDeepSeek.DeepSeekAttention)
                     or isinstance(model, MockedDeepSeek.DeepSeekMLP)
                     # or isinstance(model, MockedDeepSeek.DeepSeekMOE)
                     # or isinstance(model, MockedDeepSeek.DeepSeekColumnLinear)
@@ -94,9 +93,8 @@ class SimAIWorkload():
                     or isinstance(model, MockedQwen3.Qwen3MoeRMSNorm)
                     or isinstance(model, MockedQwen3.Qwen3MoeAttention)
                     or isinstance(model, MockedQwen3.Qwen3MoeRoute)
-                    or isinstance(model, MockedQwen3.Qwen3MoeExpert)
-                ):
-                    layers.append(LayerInfo(model.layer_id, model.name))
+                    or isinstance(model, MockedQwen3.Qwen3MoeExpert)):
+                layers.append(LayerInfo(model.layer_id, model.name))
             for child in model.child_modules():
                 traverse_model(child, child_id+1)
 
