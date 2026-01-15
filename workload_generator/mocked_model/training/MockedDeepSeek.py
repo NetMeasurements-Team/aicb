@@ -534,3 +534,7 @@ class DeepSeekV3Model(MockedModel):
         workloads.extend(self.embedding.backward())
         assert all([isinstance(workload, LogItem) for workload in workloads.workload])
         return workloads
+
+    def activation_memory(self) -> int:
+        print("WARNING: activation memory computation for DeepSeek is not correctly implemented yet.")
+        return super().activation_memory()
