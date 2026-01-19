@@ -535,6 +535,18 @@ class DeepSeekV3Model(MockedModel):
         assert all([isinstance(workload, LogItem) for workload in workloads.workload])
         return workloads
 
+    def print_layers(self):
+        print(f"Embedding:  {self.embedding.tot_parameters():>14,} params")
+        print(f" - {self.embedding.name:<20} {self.embedding.tot_parameters():>14,} params, shapes: {', '.join([f'{p.shape}' for p in self.embedding.parameters()])}")
+        for i, layer in enumerate(self.layers):
+            print(f"Layer {i:2}:   {layer.tot_parameters():>14,} params")
+            print(f" - {layer.attention.name:<20} {layer.attention.tot_parameters():>14,} params, shapes: {', '.join([f'{p.shape}' for p in layer.attention.parameters()])}")
+            print(f" - {'post_attention_bias':<20} {layer.post_attention_layernorm_bias.numel():>14,} params, shapes: {layer.post_attention_layernorm_bias.shape}")
+            print(f" - {'pre_mlp_layernorm':<20} {layer.pre_mlp_layernorm.tot_parameters():>14,} params, shapes: {', '.join([f'{p.shape}' for p in layer.pre_mlp_layernorm.parameters()])}")
+            print(f" - {layer.mlp.name:<20} {layer.mlp.tot_parameters():>14,} params, shapes: {', '.join([f'{p.shape}' for p in layer.mlp.parameters()])}")
+        print(f"Final norm: {self.final_norm.tot_parameters():>14,} params")
+        print(f" - {self.final_norm.name:<20} {self.final_norm.weight.numel():>14,} params, shapes: {self.final_norm.weight.shape}")
+
     def activation_memory(self) -> int:
         print("WARNING: activation memory computation for DeepSeek is not correctly implemented yet.")
         return super().activation_memory()
